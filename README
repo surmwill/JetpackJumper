@@ -1,0 +1,74 @@
+-- Compilation --
+  
+Shouldn't need to compile.
+However if you do...
+cd to /cs488-good, premake4 gmake, make
+cd to /cs488-good/A3, premake4 gmake, make
+
+Note that if you make clean in the /cs488-good directory this will remove the sound library libIrrKlang.so from /cs488-good/lib.
+There is a copy of the library in /cs488-good so just copy it back to /cs488-good/lib after the make clean.
+
+To run execute ./run in the cs488-good/A3 directory
+This is because I had to provide it a path to the shared library via command line
+
+Tested on lab computer gl38.student.cs
+
+-- Objectives --
+Model the scene
+UI - score, orbs collected, keyboard input
+Texture mapping - buildings, vortex
+Normal mapping - concrete slabs on top of buildings
+Collisions - cannot move through buildings or slabs, can collect orbs
+Animation - not done
+Particles - jetpack
+Motion blur - see below
+Physics - gravity and a wind gust triggered once in a random amount of jumps
+Sounds - gusts of wind heard after jumping (again random: 1/3)
+
+-- Manual --
+
+Basic functionality:
+W - turn forward
+A - turn left
+D - turn right
+Spacebar - jump
+
+Try and survive the longest by jumping from building to building
+Orbs will reduce the pushing effects of wind at the cost of increasing your movement speed
+
+Extra functionality:
+
+
+TO TEST COLLISONS
+C - toggles test collisions mode. In collisions test mode:
+	You are no longer continually pushed forward so its easier to test collisions.
+	WAD, Spacebar no longer work. 
+	The arrow keys control forward/backward/side-to-side movement. 
+	The R and F keys move you up and down. 
+	Spheres are no longer collected - they are impassable
+	You can press c again to return to the original mode
+0 - toggles bounding ellipse visual
+
+TO TEST NORMAL MAPPING
+1 & 2 - switch the direction vector of the directional light to one of two predefined locations
+	1 = vec3( 0.0, 1.0, 1.0 ) - this is from the fragment to the light, so the light is behind the camera and up
+	2 = vec3( 0.0, 0.0, 1.0 ) - this if from the fragment to the light, so the light is behind the camera
+M & N - rotates the (light) direction vector in a circle around the y axis (hold them down) so you can see how the normal map changes wrt the light direction.
+3 - toggles a rendering of only the diffuse texture (shows flatness)
+
+TO TEST TEXTURES
+4 - toggles building/vortex textures on/off
+
+TO TEST CUBEMAP/SKYBOX
+5 - toggles the vortex on/off (the vortex covers the bottom of the cubemap)
+6 - moves to a skybox viewing mode. The arrow keys and R and F can be used to look at each side of the cubemap. You'll have to quit after this
+
+TO TEST MOTION BLUR
+7 - is to toggle motion blur on/off (without needing to hit a certain speed)
+8 - is to disable motion blur (it will turn on automatically once a certain speed is hit). Can be kind of annoying
+
+TO TEST PHYSICS / SOUND
+9 - toggle wind to activate every jump
+
+TO TEST ANIMATION
+close your eyes and pretend that I did it.

@@ -1,0 +1,91 @@
+#include <iostream>
+#include "Collider.hpp"
+#include "SceneNode.hpp"
+#include "GeometryNode.hpp"
+#include <glm/gtx/io.hpp>
+
+using namespace glm;
+using namespace std;
+
+BatchInfoMap* Collider::batch_info_map = nullptr;
+MeshConsolidator* Collider::mesh_consolidator = nullptr;
+
+Collider::Collider( SceneNode* collider, const mat4& trans ) {
+	if( !batch_info_map || !mesh_consolidator ) {
+		cerr << "ERROR: call init() first" << endl;
+		return;
+	}
+	fillPolys( collider, trans );
+	trans_polys = polys;
+	trans_norm_polys = norm_polys;
+}
+
+void Collider::init( BatchInfoMap* bim, MeshConsolidator* mc ) {
+	batch_info_map = bim;
+	mesh_consolidator = mc;
+}
+
+void Collider::fillPolys( SceneNode* node, const mat4& trans ) {
+	if( node->m_nodeType == NodeType::GeometryNode ) {
+		GeometryNode* geo_node = static_cast<GeometryNode*>( node );
+		BatchInfo batch_info = (*batch_info_map)[geo_node->meshId]; 
+		
+		for( int i = batch_info.startIndex; i < batch_info.numIndices * 3; i+=9 ) {
+			const float* start_vert = mesh_consolidator->getVertexPositionDataPtr() + i;
+			
+			polys.emplace_back( array<vec4, 3> {
+				trans * geo_node->trans * vec4( *( start_vert ), *( start_vert + 1 ), *( start_vert + 2 ), 1 ),
+				trans * geo_node->trans * vec4( *( start_vert + 3 ), *( start_vert + 4 ), *( start_vert + 5 ), 1 ),
+				trans * geo_node->trans * vec4( *( start_vert + 6 ), *( start_vert + 7 ), *( start_vert + 8 ), 1 )
+			} );
+		}
+
+		for( int i = batch_info.startIndex; i < batch_info.numIndices * 3; i+=9 ) {
+			const float* start_norm = mesh_consolidator->getVertexNormalDataPtr() + i;
+			const mat3 norm = transpose( inverse( mat3( trans * geo_node->trans ) ) );
+			
+			norm_polys.emplace_back( array<vec3, 3> {
+				normalize( norm * vec3( *( start_norm ), *( start_norm + 1 ), *( start_norm + 2 ) ) ),
+				normalize( norm * vec3( *( start_norm + 3 ), *( start_norm + 4 ), *( start_norm + 5 ) ) ),
+				normalize( norm * vec3( *( start_norm + 6 ), *( start_norm + 7 ), *( start_norm + 8 ) ) )
+			} );
+		
+		}
+	}
+	for( SceneNode* node : node->children ) { fillPolys( node, trans ); }
+}
+
+void Collider::printPolys() {
+	cout << "faces" << endl;
+	for( const array<vec4, 3>& poly: trans_polys ) {
+		cout << poly[0] << " " << poly[1] << " " << poly[2] << endl;
+	}
+	cout << "normals" << endl;
+	for( const array<vec3, 3>& norm_poly: trans_norm_polys ) {
+		cout << norm_poly[0] << " " << norm_poly[1] << " " << norm_poly[2] << endl;
+	}
+}
+
+void Collider::transformPolys( const mat4& trans ) { 
+	for( unsigned int i = 0; i < polys.size(); i++ ) {
+		trans_polys[i][0] = trans * polys[i][0];
+		trans_polys[i][1] = trans * polys[i][1];
+		trans_polys[i][2] = trans * polys[i][2];
+	}
+	mat3 norm = transpose( inverse( mat3( trans ) ) );
+	for( unsigned int i = 0; i < polys.size(); i++ ) {
+		trans_norm_polys[i][0] = normalize( norm * norm_polys[i][0] );
+		trans_norm_polys[i][1] = normalize( norm * norm_polys[i][1] );
+		trans_norm_polys[i][2] = normalize( norm * norm_polys[i][2] );
+	}
+}
+
+void Collider::setCollisionCheck( bool collision ) { check_for_collision = collision; }
+
+void Collider::collided() { }
+
+bool Collider::checkForCollision() const { return check_for_collision; }
+
+const std::vector< std::array<glm::vec4, 3> >& Collider::getPolys() { return trans_polys; }
+
+const std::vector< std::array<glm::vec3, 3> >& Collider::getPolyNorms() { return trans_norm_polys; }

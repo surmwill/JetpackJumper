@@ -1,0 +1,49 @@
+# Mesh Id
+o cube
+
+# Vertex Positions
+#1 left bot front
+v -0.5 -0.5 0.5 
+#2 left bot back
+v -0.5 -0.5 -0.5
+#3 right bot back
+v 0.5 -0.5 -0.5
+#4 right bot front
+v 0.5 -0.5 0.5
+#5 left top front
+v -0.5 0.5 0.5
+#6 left top back
+v -0.5 0.5 -0.5 
+#7 right top front
+v 0.5 0.5 -0.5
+#8 right top front
+v 0.5 0.5 0.5
+
+# Texture Coordinates
+vt 1.0 1.0 
+vt 1.0 0.0
+vt 0.0 0.0
+vt 0.0 1.0
+
+# Vertex Normals
+vn -1.0 0.0 0.0
+vn 0.0 0.0 -1.0
+vn 1.0 -0.0 0.0
+vn 0.0 -0.0 1.0
+vn 0.0 -1.0 0.0
+vn 0.0 1.0 0.0
+
+# Triangle face indices: vertex//normal
+# Indices start at 1
+f 5/4/1 6/4/1 2/3/1
+f 6/4/2 7/1/2 3/2/2
+f 7/1/3 8/1/3 4/2/3
+f 5/4/4 1/3/4 8/1/4
+f 1/3/5 2/3/5 3/2/5
+f 8/1/6 7/1/6 6/4/6
+f 1/3/1 5/4/1 2/3/1
+f 2/3/2 6/4/2 3/2/2
+f 3/2/3 7/1/3 4/2/3
+f 8/1/4 1/3/4 4/2/4
+f 4/2/5 1/3/5 3/2/5
+f 5/4/6 8/1/6 6/4/6
