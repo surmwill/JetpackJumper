@@ -8,6 +8,7 @@ Shaders can be found in the A3/Assets directory.
 
 Features Implemented:
    -hierarchical modelling
+   
    -texture mapping 
    -normal mapping
    -cube mapping
