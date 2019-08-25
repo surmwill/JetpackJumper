@@ -2,7 +2,7 @@
 
 ---
 
-My code can be found in the A3 directory with A3.cpp containing the main game loop.
+Code can be found in the A3 directory with A3.cpp containing the main game loop.
 
 Shaders can be found in the A3/Assets directory.
 
